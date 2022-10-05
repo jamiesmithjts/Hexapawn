@@ -10,6 +10,9 @@ public class UIBehaviour : MonoBehaviour
     public Text blueWins;
     public Text turnTracker;
     public GameObject winnerBacker;
+    public GameObject startMenuBackground;
+
+    bool GameStarted = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,39 +22,50 @@ public class UIBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!theGame.GameOver)
+        if (!GameStarted)
         {
-            if(theGame.playerTurn)
+            if(Input.GetKeyDown(KeyCode.Space))
             {
-                turnTracker.text = "Red's turn";
-                turnTracker.color = Color.red;
-            }
-            else
-            {
-                turnTracker.text = "Blue's turn";
-                turnTracker.color = Color.blue;
+                startMenuBackground.SetActive(false);
+                GameStarted = true;
             }
         }
-        if(theGame.GameOver)
+        if (GameStarted)
         {
-            winnerBacker.SetActive(true);
-            turnTracker.text = "Press space to restart";
-            turnTracker.color = Color.black;
-            if(theGame.playerTurn)
+            if (!theGame.GameOver)
             {
-                blueWins.gameObject.SetActive(true);            
+                if (theGame.playerTurn)
+                {
+                    turnTracker.text = "Red's turn";
+                    turnTracker.color = Color.red;
+                }
+                else
+                {
+                    turnTracker.text = "Blue's turn";
+                    turnTracker.color = Color.blue;
+                }
             }
-            else
+            if (theGame.GameOver)
             {
-                redWins.gameObject.SetActive(true);
+                winnerBacker.SetActive(true);
+                turnTracker.text = "Press space to restart";
+                turnTracker.color = Color.black;
+                if (theGame.playerTurn)
+                {
+                    blueWins.gameObject.SetActive(true);
+                }
+                else
+                {
+                    redWins.gameObject.SetActive(true);
+                }
             }
-        }
 
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            blueWins.gameObject.SetActive(false);
-            redWins.gameObject.SetActive(false);
-            winnerBacker.SetActive(false);
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                blueWins.gameObject.SetActive(false);
+                redWins.gameObject.SetActive(false);
+                winnerBacker.SetActive(false);
+            }
         }
     }
 }
