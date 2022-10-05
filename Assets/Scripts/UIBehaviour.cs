@@ -9,6 +9,7 @@ public class UIBehaviour : MonoBehaviour
     public Text redWins;
     public Text blueWins;
     public Text turnTracker;
+    public GameObject winnerBacker;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,11 +34,12 @@ public class UIBehaviour : MonoBehaviour
         }
         if(theGame.GameOver)
         {
+            winnerBacker.SetActive(true);
             turnTracker.text = "Press space to restart";
             turnTracker.color = Color.black;
             if(theGame.playerTurn)
             {
-                blueWins.gameObject.SetActive(true);
+                blueWins.gameObject.SetActive(true);            
             }
             else
             {
@@ -49,6 +51,7 @@ public class UIBehaviour : MonoBehaviour
         {
             blueWins.gameObject.SetActive(false);
             redWins.gameObject.SetActive(false);
+            winnerBacker.SetActive(false);
         }
     }
 }
