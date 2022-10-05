@@ -18,21 +18,22 @@ public class Counter : MonoBehaviour
         SelectionRing = transform.GetChild(0).gameObject;
     }
 
-    public void SetSelected()
+    // Make the counter selected/unselected
+    public void SetSelected(bool active)
     {
-        SelectionRing.SetActive(true);
+        if (active)
+            SelectionRing.SetActive(true);
+        else
+            SelectionRing.SetActive(false);
     }
 
-    public void SetUnselected()
-    {
-        SelectionRing.SetActive(false);
-    }
-
+    // Make the counter red
     public void SetRed()
     {
         GetComponent<Renderer>().material = Red;
     }
 
+    // Make the counter blue
     public void SetBlue()
     {
         GetComponent<Renderer>().material = Blue;
@@ -44,7 +45,6 @@ public class Counter : MonoBehaviour
         if (other.transform.tag == "Cell")
         {
             CurrentCell = other.gameObject;
-            //Debug.Log("Counter enter cell " + other.transform.name);
         }
     }
 }

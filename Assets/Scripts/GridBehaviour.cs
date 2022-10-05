@@ -72,19 +72,6 @@ public class GridBehaviour : MonoBehaviour
             {
                 FindValidMoves(CounterListAll[0]);
             }
-            /*
-            if (CheckBlueWinner())
-            {
-                Debug.Log("Blue won!");
-                GameOver = true;
-            }
-
-            if (CheckRedWinner())
-            {
-                Debug.Log("Red won!");
-                GameOver = true;
-            }
-            */
         }
         
     }
@@ -388,14 +375,14 @@ public class GridBehaviour : MonoBehaviour
         {
             foreach (GridCell g in currentValidMoves)
             {
-                g.SetSelected();
+                g.SetSelected(true);
             }
         }
         else
         {
             foreach (GridCell g in GridList)
             {
-                g.SetUnselected();
+                g.SetSelected(false);
             }
         }
         
@@ -403,7 +390,7 @@ public class GridBehaviour : MonoBehaviour
 
     void SetCurrentCounter(Counter c)
     {
-        c.SetSelected();
+        c.SetSelected(true);
         currentCounter = c;
         currentValidMoves = FindValidMoves(c);
         DisplayValidMoves();
@@ -411,7 +398,7 @@ public class GridBehaviour : MonoBehaviour
 
     void UnsetCurrentCounter(Counter c)
     {
-        c.SetUnselected();
+        c.SetSelected(false);
         currentCounter = null;
         currentValidMoves = null;
         DisplayValidMoves();
