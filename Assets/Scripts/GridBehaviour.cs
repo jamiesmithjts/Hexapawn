@@ -5,8 +5,8 @@ public class GridBehaviour : MonoBehaviour
 {
     // A reference to the grid prefab, dimensions of the grid and a list of all cells
     public GridCell gridCellPrefab;
-    public int gridY = 3;
-    public int gridX = 3;
+    public int gridY = 4;
+    public int gridX = 4;
     List<GridCell> GridList = new List<GridCell>();
 
     // Variables for the 2 special grid cells which will store dead counters
