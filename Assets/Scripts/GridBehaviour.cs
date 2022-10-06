@@ -27,7 +27,8 @@ public class GridBehaviour : MonoBehaviour
     public bool GameOver = false;
     // true for red, false for blue
     public bool playerTurn = true;
-
+    // Tracks whether the game will be Octopawn or not
+    public bool Octopawn = false;
 
     void Start()
     {
