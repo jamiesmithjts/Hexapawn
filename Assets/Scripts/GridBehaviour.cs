@@ -1,12 +1,18 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+public enum Game
+{
+    Hexapawn,
+    Octopawn
+}
+
 public class GridBehaviour : MonoBehaviour
 {
     // A reference to the grid prefab, dimensions of the grid and a list of all cells
     public GridCell gridCellPrefab;
-    public int gridY = 4;
-    public int gridX = 4;
+    int gridY = 3;
+    int gridX = 3;
     List<GridCell> GridList = new List<GridCell>();
 
     // Variables for the 2 special grid cells which will store dead counters
@@ -23,6 +29,7 @@ public class GridBehaviour : MonoBehaviour
     // Additional references needed for Octopawn
     public Transform standPos;
     public Transform cameraPos;
+    public Transform BlueGraveyardPos;
 
     // Set up for mouse control
     Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -31,8 +38,8 @@ public class GridBehaviour : MonoBehaviour
     public bool GameOver = false;
     // true for red, false for blue
     public bool playerTurn = true;
-    // Tracks whether the game will be Octopawn or not
-    public bool Octopawn = false;
+
+    public Game currentGame;
 
     void Start()
     {
@@ -204,17 +211,38 @@ public class GridBehaviour : MonoBehaviour
     }
 
     // Set up board sorts grids, counters and graveyards
-    public void SetUpBoard()
+    public void SetUpBoard(Game gamemode)
     {
-        // Start by resetting the board
-        //ResetBoard();
-
-        if (Octopawn)
+        if (gamemode == Game.Hexapawn)
         {
-            gridX += 1; 
-            gridY += 1;
-        }
+            gridX = 3;
+            gridY = 3;
 
+            RedGraveyard = Instantiate(gridCellPrefab, new Vector3(-2, 0.7f, 4), Quaternion.identity);
+            RedGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
+            RedGraveyard.transform.name = "RedGraveyard";
+            RedGraveyard.transform.SetParent(transform);
+
+            BlueGraveyard = Instantiate(gridCellPrefab, new Vector3(8, 0.7f, 4), Quaternion.identity);
+            BlueGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
+            BlueGraveyard.transform.name = "BlueGraveyard";
+            BlueGraveyard.transform.SetParent(transform);
+            BlueGraveyardPos.position = new Vector3(10, 0.18f, 4);
+        }
+        else if(gamemode == Game.Octopawn)
+        {
+            gridX = 4;
+            gridY = 4;
+            standPos.position = new Vector3(4, standPos.position.y, 4);
+            standPos.localScale = new Vector3(8.5f, 1, 8.5f);
+            cameraPos.position = new Vector3(4.31f, 10.98f, 2.97f);
+
+            BlueGraveyard = Instantiate(gridCellPrefab, new Vector3(10, 0.7f, 3), Quaternion.identity);
+            BlueGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
+            BlueGraveyard.transform.name = "BlueGraveyard";
+            BlueGraveyard.transform.SetParent(transform);
+            BlueGraveyardPos.position = new Vector3(10, 0.18f, BlueGraveyard.transform.position.z);
+        }
         // black stores a bool that is flipped back and forth to get a chequerboard pattern
         bool black = true;
 
@@ -230,7 +258,7 @@ public class GridBehaviour : MonoBehaviour
                 cell.transform.SetParent(transform);
 
                 // give it the correct colour then flip black
-                if(black)
+                if (black)
                 {
                     cell.BecomeBlack();
                 }
@@ -270,15 +298,11 @@ public class GridBehaviour : MonoBehaviour
         }
 
         // spawn the graveyarde on top of the cubes, and set them up correctly.
-        RedGraveyard = Instantiate(gridCellPrefab, new Vector3(-2, 0.7f, 3), Quaternion.identity);
-        RedGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
-        RedGraveyard.transform.name = "RedGraveyard";
-        RedGraveyard.transform.SetParent(transform);
+        
 
-        BlueGraveyard = Instantiate(gridCellPrefab, new Vector3(8, 0.7f, 3), Quaternion.identity);
-        BlueGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
-        BlueGraveyard.transform.name = "BlueGraveyard";
-        BlueGraveyard.transform.SetParent(transform);
+        
+
+
     }
 
     // Destroy all grids/graveyards/counters then clear all lists for them
@@ -307,7 +331,7 @@ public class GridBehaviour : MonoBehaviour
         GameOver = false;
         playerTurn = true;
         Debug.ClearDeveloperConsole();
-        SetUpBoard();
+        SetUpBoard(Game.Hexapawn);
 
     }
 

@@ -280,7 +280,7 @@ Transform:
   m_GameObject: {fileID: 605937080}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 3.44, y: 0.54, z: 3.34}
-  m_LocalScale: {x: 20, y: 20, z: 1}
+  m_LocalScale: {x: 50, y: 50, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -766,14 +766,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridCellPrefab: {fileID: -521692959680701857, guid: 57469c3cb5d546c4ba389318d4b9dad9, type: 3}
-  gridY: 4
-  gridX: 4
   counterPrefab: {fileID: 6230306499416024519, guid: f32595e1ce90d4f46b75897b969c64a1, type: 3}
   standPos: {fileID: 1266005438}
   cameraPos: {fileID: 963194228}
+  BlueGraveyardPos: {fileID: 1284408232}
   GameOver: 0
   playerTurn: 1
-  Octopawn: 0
+  currentGame: 0
 --- !u!4 &1129980484
 Transform:
   m_ObjectHideFlags: 0
