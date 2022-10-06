@@ -766,11 +766,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridCellPrefab: {fileID: -521692959680701857, guid: 57469c3cb5d546c4ba389318d4b9dad9, type: 3}
-  gridY: 3
-  gridX: 3
+  gridY: 4
+  gridX: 4
   counterPrefab: {fileID: 6230306499416024519, guid: f32595e1ce90d4f46b75897b969c64a1, type: 3}
+  standPos: {fileID: 1266005438}
+  cameraPos: {fileID: 963194228}
   GameOver: 0
   playerTurn: 1
+  Octopawn: 0
 --- !u!4 &1129980484
 Transform:
   m_ObjectHideFlags: 0
@@ -1155,7 +1158,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1325622818}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 2.0001452, y: 0.7668237, z: 1}
   m_Children: []
   m_Father: {fileID: 1233877128}
@@ -1163,8 +1166,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 30.454973, y: -155.40176}
-  m_SizeDelta: {x: 1000, y: 200}
+  m_AnchoredPosition: {x: 15, y: -250}
+  m_SizeDelta: {x: 1000, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1325622820
 MonoBehaviour:
@@ -1199,7 +1202,10 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Press space to begin
+  m_Text: 'Press space to begin Hexapawn
+
+
+    Press Q to begin Octopawn'
 --- !u!222 &1325622821
 CanvasRenderer:
   m_ObjectHideFlags: 0

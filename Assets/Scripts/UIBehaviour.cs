@@ -26,8 +26,16 @@ public class UIBehaviour : MonoBehaviour
             // When they do, hide the main menu and let the other inputs in
             if(Input.GetKeyDown(KeyCode.Space))
             {
+                theGame.SetUpBoard();
                 startMenuBackground.SetActive(false);
                 GameStarted = true;
+            }
+            if(Input.GetKeyDown(KeyCode.Q))
+            {
+                theGame.SetUpBoard();
+                startMenuBackground.SetActive(false);
+                GameStarted = true;
+                theGame.Octopawn = true;
             }
         }
 

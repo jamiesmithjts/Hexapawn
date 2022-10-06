@@ -20,6 +20,10 @@ public class GridBehaviour : MonoBehaviour
     Counter currentCounter = null;
     List<GridCell> currentValidMoves = null;
 
+    // Additional references needed for Octopawn
+    public Transform standPos;
+    public Transform cameraPos;
+
     // Set up for mouse control
     Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -33,7 +37,7 @@ public class GridBehaviour : MonoBehaviour
     void Start()
     {
         // SetUpBoard spawns grid cells, counters and graveyards
-        SetUpBoard();
+        //SetUpBoard();
     }
 
 
@@ -200,8 +204,17 @@ public class GridBehaviour : MonoBehaviour
     }
 
     // Set up board sorts grids, counters and graveyards
-    void SetUpBoard()
+    public void SetUpBoard()
     {
+        // Start by resetting the board
+        //ResetBoard();
+
+        if (Octopawn)
+        {
+            gridX += 1; 
+            gridY += 1;
+        }
+
         // black stores a bool that is flipped back and forth to get a chequerboard pattern
         bool black = true;
 
@@ -233,7 +246,7 @@ public class GridBehaviour : MonoBehaviour
         }
 
         // create red counters
-        for (int x = 1; x <= 5; x += 2)
+        for (int x = 1; x <= gridX + 3; x += 2)
         {
             // spawn a counter at this x/y, set its name, colour and parent. add it to the counter list.
             Counter thisCounter = Instantiate(counterPrefab, new Vector3(x, 1.5f, 1), Quaternion.identity);
@@ -245,7 +258,7 @@ public class GridBehaviour : MonoBehaviour
         }
 
         // create blue counters
-        for (int x = 1; x <= 5; x += 2)
+        for (int x = 1; x <= gridX + 3; x += 2)
         {
             // spawn a counter at this x/y, set its name, colour and parent. add it to the counter list.
             Counter thisCounter = Instantiate(counterPrefab, new Vector3(x, 1.5f, 5), Quaternion.identity);
