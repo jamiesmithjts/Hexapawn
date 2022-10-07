@@ -27,6 +27,7 @@ public class UIBehaviour : MonoBehaviour
             if(Input.GetKeyDown(KeyCode.Space))
             {
                 theGame.SetUpBoard(Game.Hexapawn);
+                theGame.GameOver = false;
                 startMenuBackground.SetActive(false);
                 GameStarted = true;
             }

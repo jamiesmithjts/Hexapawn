@@ -29,13 +29,14 @@ public class GridBehaviour : MonoBehaviour
     // Additional references needed for Octopawn
     public Transform standPos;
     public Transform cameraPos;
-    public Transform BlueGraveyardPos;
+    public Transform BlueGraveyardStand;
+    public Transform RedGraveyardStand;
 
     // Set up for mouse control
     Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
 
     // Tracks whether the game has ended
-    public bool GameOver = false;
+    public bool GameOver = true;
     // true for red, false for blue
     public bool playerTurn = true;
 
@@ -66,8 +67,7 @@ public class GridBehaviour : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 if(HandleTouch())
-                {
-                    
+                {                    
                     TogglePlayerTurn();
                 }
                 
@@ -213,35 +213,40 @@ public class GridBehaviour : MonoBehaviour
     // Set up board sorts grids, counters and graveyards
     public void SetUpBoard(Game gamemode)
     {
+        RedGraveyard = Instantiate(gridCellPrefab);
+        RedGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
+        RedGraveyard.transform.name = "RedGraveyard";
+        RedGraveyard.transform.SetParent(transform);
+
+        BlueGraveyard = Instantiate(gridCellPrefab);
+        BlueGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
+        BlueGraveyard.transform.name = "BlueGraveyard";
+        BlueGraveyard.transform.SetParent(transform);
+
         if (gamemode == Game.Hexapawn)
         {
             gridX = 3;
             gridY = 3;
 
-            RedGraveyard = Instantiate(gridCellPrefab, new Vector3(-2, 0.7f, 4), Quaternion.identity);
-            RedGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
-            RedGraveyard.transform.name = "RedGraveyard";
-            RedGraveyard.transform.SetParent(transform);
-
-            BlueGraveyard = Instantiate(gridCellPrefab, new Vector3(8, 0.7f, 4), Quaternion.identity);
-            BlueGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
-            BlueGraveyard.transform.name = "BlueGraveyard";
-            BlueGraveyard.transform.SetParent(transform);
-            BlueGraveyardPos.position = new Vector3(10, 0.18f, 4);
+            RedGraveyard.transform.position = new Vector3(-2, 0.7f, 3);
+            BlueGraveyard.transform.position = new Vector3(8, 0.7f, 3);
+            
+            BlueGraveyardStand.position = new Vector3(8, 0.18f, 3);
         }
         else if(gamemode == Game.Octopawn)
         {
             gridX = 4;
             gridY = 4;
+
             standPos.position = new Vector3(4, standPos.position.y, 4);
             standPos.localScale = new Vector3(8.5f, 1, 8.5f);
             cameraPos.position = new Vector3(4.31f, 10.98f, 2.97f);
 
-            BlueGraveyard = Instantiate(gridCellPrefab, new Vector3(10, 0.7f, 3), Quaternion.identity);
-            BlueGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
-            BlueGraveyard.transform.name = "BlueGraveyard";
-            BlueGraveyard.transform.SetParent(transform);
-            BlueGraveyardPos.position = new Vector3(10, 0.18f, BlueGraveyard.transform.position.z);
+            RedGraveyard.transform.position = new Vector3(-2, 0.7f, 4);
+            BlueGraveyard.transform.position = new Vector3(10, 0.7f, 4);
+
+            BlueGraveyardStand.position = new Vector3(10, 0.18f, 4);
+            RedGraveyardStand.position = new Vector3(-2, 0.18f, 4);
         }
         // black stores a bool that is flipped back and forth to get a chequerboard pattern
         bool black = true;
@@ -266,6 +271,10 @@ public class GridBehaviour : MonoBehaviour
                 {
                     cell.BecomeWhite();
                 }
+                if (z % 4 == 0 && gamemode == Game.Octopawn)
+                {
+                    break;
+                }
                 black = !black;
 
                 // add the new cell to the list of gridcells
@@ -274,10 +283,10 @@ public class GridBehaviour : MonoBehaviour
         }
 
         // create red counters
-        for (int x = 1; x <= gridX + 3; x += 2)
+        for (int x = 0; x < gridX; x++)
         {
             // spawn a counter at this x/y, set its name, colour and parent. add it to the counter list.
-            Counter thisCounter = Instantiate(counterPrefab, new Vector3(x, 1.5f, 1), Quaternion.identity);
+            Counter thisCounter = Instantiate(counterPrefab);
             thisCounter.transform.name = "CounterRed" + x;
             thisCounter.transform.tag = "Red";
             thisCounter.SetRed();
@@ -286,21 +295,42 @@ public class GridBehaviour : MonoBehaviour
         }
 
         // create blue counters
-        for (int x = 1; x <= gridX + 3; x += 2)
+        for (int x = 0; x < gridX; x++)
         {
             // spawn a counter at this x/y, set its name, colour and parent. add it to the counter list.
-            Counter thisCounter = Instantiate(counterPrefab, new Vector3(x, 1.5f, 5), Quaternion.identity);
+            Counter thisCounter = Instantiate(counterPrefab);
             thisCounter.transform.name = "CounterBlue" + x;
             thisCounter.transform.tag = "Blue";
             thisCounter.SetBlue();
             thisCounter.transform.SetParent(transform);
             CounterListAll.Add(thisCounter);
         }
-
         // spawn the graveyarde on top of the cubes, and set them up correctly.
-        
 
-        
+        int redPosX = 1;
+        int bluePosX = 1;
+
+        int bluePosZ = 5;
+        if(gamemode == Game.Octopawn)   
+            bluePosZ = 7;
+
+
+        foreach (Counter c in CounterListAll)
+        {
+            if(c.tag == "Red")
+            {
+                c.transform.position = new Vector3(redPosX, 1.5f, 1);
+                redPosX += 2;
+            }
+            else
+            {
+                c.transform.position = new Vector3(bluePosX, 1.5f, bluePosZ);
+                bluePosX += 2;
+            }
+        }
+
+
+
 
 
     }
@@ -331,7 +361,7 @@ public class GridBehaviour : MonoBehaviour
         GameOver = false;
         playerTurn = true;
         Debug.ClearDeveloperConsole();
-        SetUpBoard(Game.Hexapawn);
+        SetUpBoard(currentGame);
 
     }
 
