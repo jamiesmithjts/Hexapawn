@@ -10,6 +10,7 @@ public class UIBehaviour : MonoBehaviour
     public Text redWins;
     public Text blueWins;
     public Text turnTracker;
+    public Text gamemode;
     public GameObject winnerBacker;
     public GameObject startMenuBackground;
 
@@ -27,6 +28,7 @@ public class UIBehaviour : MonoBehaviour
             if(Input.GetKeyDown(KeyCode.Space))
             {
                 theGame.SetUpBoard(Game.Hexapawn);
+                theGame.currentGame = Game.Hexapawn;
                 theGame.GameOver = false;
                 startMenuBackground.SetActive(false);
                 GameStarted = true;
@@ -34,6 +36,7 @@ public class UIBehaviour : MonoBehaviour
             if(Input.GetKeyDown(KeyCode.Q))
             {
                 theGame.SetUpBoard(Game.Octopawn);
+                theGame.currentGame = Game.Octopawn;
                 theGame.GameOver = false;
                 startMenuBackground.SetActive(false);
                 GameStarted = true;
@@ -43,6 +46,8 @@ public class UIBehaviour : MonoBehaviour
         // If the game has started, listen for other inputs
         if (GameStarted)
         {
+            gamemode.text = theGame.currentGame.ToString();
+
             // If the game isn't over...
             if (!theGame.GameOver)
             {

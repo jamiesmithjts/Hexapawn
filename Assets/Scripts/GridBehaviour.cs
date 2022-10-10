@@ -491,11 +491,9 @@ public class GridBehaviour : MonoBehaviour
             }
             else
             {
-                int winningRow = 7;
+                int winningRow = 5;
                 if (currentGame == Game.Octopawn)
                     winningRow = 7;
-                else if (currentGame == Game.Hexapawn)
-                    winningRow = 5;
 
                 if(c.transform.position.z == winningRow)
                 {
