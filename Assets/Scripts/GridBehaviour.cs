@@ -213,6 +213,7 @@ public class GridBehaviour : MonoBehaviour
     // Set up board sorts grids, counters and graveyards
     public void SetUpBoard(Game gamemode)
     {
+        Debug.Log("Setting up a game of " + gamemode);
         RedGraveyard = Instantiate(gridCellPrefab);
         RedGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
         RedGraveyard.transform.name = "RedGraveyard";
@@ -250,6 +251,8 @@ public class GridBehaviour : MonoBehaviour
         }
         // black stores a bool that is flipped back and forth to get a chequerboard pattern
         bool black = true;
+        // Variable that is used to sort Octopawns chequerboard
+        int OctoColourCount = 0;
 
         // nested for statements to create a grid
         for (int x = 1; x < gridX * 2; x += 2)
@@ -271,9 +274,14 @@ public class GridBehaviour : MonoBehaviour
                 {
                     cell.BecomeWhite();
                 }
-                if (z % 4 == 0 && gamemode == Game.Octopawn)
+
+                OctoColourCount++;
+                if (gamemode == Game.Octopawn)
                 {
-                    break;
+                    if(OctoColourCount % 4 == 0)
+                    {
+                        black = !black;
+                    }
                 }
                 black = !black;
 
@@ -483,14 +491,22 @@ public class GridBehaviour : MonoBehaviour
             }
             else
             {
-                if(c.transform.position.z == 5)
+                int winningRow = 7;
+                if (currentGame == Game.Octopawn)
+                    winningRow = 7;
+                else if (currentGame == Game.Hexapawn)
+                    winningRow = 5;
+
+                if(c.transform.position.z == winningRow)
                 {
+                    Debug.Log("Red won because they got a counter to the back row");
                     return true;
                 }
             }
         }
         if(ValidMoves.Count == 0)
         {
+            Debug.Log("Red won because Blue has no moves");
             return true;
         }
         else
@@ -513,12 +529,15 @@ public class GridBehaviour : MonoBehaviour
             {
                 if (c.transform.position.z == 1)
                 {
+                    Debug.Log("Blue won because they got a counter to the back row");
                     return true;
+
                 }
             }
         }
         if (ValidMoves.Count == 0)
         {
+            Debug.Log("Blue won because Red has no moves");
             return true;
         }
         else
@@ -563,7 +582,7 @@ public class GridBehaviour : MonoBehaviour
             if (CheckRedWinner())
             {
                 GameOver = true;
-                Debug.Log("Red won!");
+                //Debug.Log("Red won!");
             }
         }
         else
@@ -571,7 +590,7 @@ public class GridBehaviour : MonoBehaviour
             if (CheckBlueWinner())
             {
                 GameOver = true;
-                Debug.Log("Blue won!");
+                //Debug.Log("Blue won!");
             }
         }        
     }

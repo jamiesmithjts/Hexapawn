@@ -34,6 +34,7 @@ public class UIBehaviour : MonoBehaviour
             if(Input.GetKeyDown(KeyCode.Q))
             {
                 theGame.SetUpBoard(Game.Octopawn);
+                theGame.GameOver = false;
                 startMenuBackground.SetActive(false);
                 GameStarted = true;
             }
