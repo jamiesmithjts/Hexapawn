@@ -211,9 +211,9 @@ public class GridBehaviour : MonoBehaviour
     }
 
     // Set up board sorts grids, counters and graveyards
-    public void SetUpBoard(Game gamemode)
+    public void SetUpBoard()
     {
-        Debug.Log("Setting up a game of " + gamemode);
+        Debug.Log("Setting up a game of " + currentGame);
         RedGraveyard = Instantiate(gridCellPrefab);
         RedGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
         RedGraveyard.transform.name = "RedGraveyard";
@@ -224,7 +224,7 @@ public class GridBehaviour : MonoBehaviour
         BlueGraveyard.transform.name = "BlueGraveyard";
         BlueGraveyard.transform.SetParent(transform);
 
-        if (gamemode == Game.Hexapawn)
+        if (currentGame == Game.Hexapawn)
         {
             gridX = 3;
             gridY = 3;
@@ -234,7 +234,7 @@ public class GridBehaviour : MonoBehaviour
             
             BlueGraveyardStand.position = new Vector3(8, 0.18f, 3);
         }
-        else if(gamemode == Game.Octopawn)
+        else if(currentGame == Game.Octopawn)
         {
             gridX = 4;
             gridY = 4;
@@ -276,7 +276,7 @@ public class GridBehaviour : MonoBehaviour
                 }
 
                 OctoColourCount++;
-                if (gamemode == Game.Octopawn)
+                if (currentGame == Game.Octopawn)
                 {
                     if(OctoColourCount % 4 == 0)
                     {
@@ -319,7 +319,7 @@ public class GridBehaviour : MonoBehaviour
         int bluePosX = 1;
 
         int bluePosZ = 5;
-        if(gamemode == Game.Octopawn)   
+        if(currentGame == Game.Octopawn)   
             bluePosZ = 7;
 
 
@@ -344,8 +344,8 @@ public class GridBehaviour : MonoBehaviour
     }
 
     // Destroy all grids/graveyards/counters then clear all lists for them
-    void ResetBoard()
-     {
+    public void ResetBoard()
+    {
         // iterate through all the lists and destroy the game objects in them, then destroy both graveyards
         foreach (GridCell g in GridList)
         {
@@ -362,6 +362,15 @@ public class GridBehaviour : MonoBehaviour
         Destroy(RedGraveyard.gameObject);
         Destroy(BlueGraveyard.gameObject);
 
+        // Reset the stand, graveyard blocks and camera
+        standPos.localPosition = new Vector3(3, -0.52f, 3);
+        standPos.localScale = new Vector3(6.5f, 1, 6.5f);
+        
+        cameraPos.localPosition = new Vector3(3.4f, 9.22f, 1.8f);
+        BlueGraveyardStand.position = new Vector3(8, 0.18f, 3);
+        RedGraveyardStand.position = new Vector3(-2, 0.18f, 3);
+        
+
         // Clear all lists, then set up the board again
         GridList.Clear();
         CounterListAll.Clear();
@@ -369,7 +378,7 @@ public class GridBehaviour : MonoBehaviour
         GameOver = false;
         playerTurn = true;
         Debug.ClearDeveloperConsole();
-        SetUpBoard(currentGame);
+        SetUpBoard();
 
     }
 
