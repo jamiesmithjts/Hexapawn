@@ -769,7 +769,8 @@ MonoBehaviour:
   counterPrefab: {fileID: 6230306499416024519, guid: f32595e1ce90d4f46b75897b969c64a1, type: 3}
   standPos: {fileID: 1266005438}
   cameraPos: {fileID: 963194228}
-  BlueGraveyardPos: {fileID: 1284408232}
+  BlueGraveyardStand: {fileID: 2127493059}
+  RedGraveyardStand: {fileID: 1284408232}
   GameOver: 0
   playerTurn: 1
   currentGame: 0
