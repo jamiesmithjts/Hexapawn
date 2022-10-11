@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+// Enum for storing the games that can be played
 public enum Game
 {
     Hexapawn,
@@ -41,12 +42,6 @@ public class GridBehaviour : MonoBehaviour
     public bool playerTurn = true;
 
     public Game currentGame;
-
-    void Start()
-    {
-        // SetUpBoard spawns grid cells, counters and graveyards
-        //SetUpBoard();
-    }
 
 
     // Update is called once per frame
@@ -355,11 +350,6 @@ public class GridBehaviour : MonoBehaviour
                 bluePosX += 2;
             }
         }
-
-
-
-
-
     }
 
     // Destroy all grids/graveyards/counters then clear all lists for them
@@ -590,27 +580,12 @@ public class GridBehaviour : MonoBehaviour
         if (playerTurn)
         {
             Debug.Log("End of red turn");
-            /*
-            if(CheckRedWinner())
-            {
-                Debug.Log("Red won!");
-                GameOver = true;
-            }
-            */
         }
         else
         {
             Debug.Log("End of blue turn");
-            /*
-            if (CheckBlueWinner())
-            {
-                Debug.Log("Blue won!");
-                GameOver = true;
-            }
-            */
         }
         playerTurn = !playerTurn;
-        //CheckWinner();
 
     }
 
@@ -621,7 +596,6 @@ public class GridBehaviour : MonoBehaviour
             if (CheckRedWinner())
             {
                 GameOver = true;
-                //Debug.Log("Red won!");
             }
         }
         else
@@ -629,7 +603,6 @@ public class GridBehaviour : MonoBehaviour
             if (CheckBlueWinner())
             {
                 GameOver = true;
-                //Debug.Log("Blue won!");
             }
         }        
     }

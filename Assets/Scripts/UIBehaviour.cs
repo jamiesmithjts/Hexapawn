@@ -56,25 +56,27 @@ public class UIBehaviour : MonoBehaviour
         if (GameStarted)
         {
             gamemode.text = theGame.currentGame.ToString();
-             
-            // Help menu has priority, if its open, all other inputs are ignored until its resovled.
-            
 
-            if(Input.GetKeyDown(KeyCode.H))
+            // Help menu has priority, if its open, all other inputs are ignored until its resovled.
+
+            if (!redWins.IsActive() && !blueWins.IsActive())
             {
-                ToggleHelpMenu();
-            }
-            else if(HelpMenu && Input.GetKeyDown(KeyCode.Space))
-            {
-                theGame.currentGame = Game.Hexapawn;
-                theGame.ResetBoard();
-                ToggleHelpMenu();
-            }
-            else if(HelpMenu && Input.GetKeyDown(KeyCode.Q))
-            {
-                theGame.currentGame = Game.Octopawn;
-                theGame.ResetBoard();
-                ToggleHelpMenu();
+                if (Input.GetKeyDown(KeyCode.H))
+                {
+                    ToggleHelpMenu();
+                }
+                else if (HelpMenu && Input.GetKeyDown(KeyCode.Space))
+                {
+                    theGame.currentGame = Game.Hexapawn;
+                    theGame.ResetBoard();
+                    ToggleHelpMenu();
+                }
+                else if (HelpMenu && Input.GetKeyDown(KeyCode.Q))
+                {
+                    theGame.currentGame = Game.Octopawn;
+                    theGame.ResetBoard();
+                    ToggleHelpMenu();
+                }
             }
 
             if (!HelpMenu)
