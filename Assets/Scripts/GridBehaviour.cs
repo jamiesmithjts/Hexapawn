@@ -66,28 +66,19 @@ public class GridBehaviour : MonoBehaviour
             // M1 will be used to either select a counter, unselect a counter or choose a grid slot to move to
             if (Input.GetMouseButtonDown(0))
             {
+                // If HandleTouch returns true, toggle the turn
                 if(HandleTouch())
                 {                    
                     TogglePlayerTurn();
                 }
                 
             }
-
-            // M2 is currently used to kill counters
-            if (Input.GetMouseButtonDown(1))
-            {
-                HandleAltTouch();
-            }
-
-            
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                FindValidMoves(CounterListAll[0]);
-            }
         }
         
     }
 
+    // This method handles the player clicking
+    // It is a bool that returns true only if the turn should end after this click 
     bool HandleTouch()
     {
         RaycastHit hit;
@@ -97,21 +88,24 @@ public class GridBehaviour : MonoBehaviour
             // If there is no current counter, the only thing the user should be able to click on is a counter
             if(currentCounter == null)
             {
+                // Check through the counter list to find the counter that was just clicked on
                 foreach (Counter c in CounterListAll)
                 {
                     if (hit.transform.name == c.transform.name)
                     {
+                        // When found, check if its the correct players turn using the playerTurn bool for the counter's tag
                         if(playerTurn && c.tag == "Red")
                         {
                             // Change the state of the counter to selected to spawn a ring, then set the current counter to this counter
-                            SetCurrentCounter(c);
+                            SetCurrentCounter(c, true);
                             return false;
                         }
                         else if (!playerTurn && c.tag == "Blue")
                         {
-                            SetCurrentCounter(c);
+                            SetCurrentCounter(c, true);
                             return false;
                         }
+                        // If not, the user tried to pick a counter on the wrong turn, so log it nad return false
                         else
                         {
                             Debug.Log("Player tried to pick wrong counter");
@@ -128,7 +122,7 @@ public class GridBehaviour : MonoBehaviour
                 if(hit.transform.tag == "Red" || hit.transform.tag == "Blue" )
                 {
                     // Remove the ring and set the current counter to null
-                    UnsetCurrentCounter(currentCounter);
+                    SetCurrentCounter(currentCounter, false);
                     return false;
                 }
                 else
@@ -136,22 +130,31 @@ public class GridBehaviour : MonoBehaviour
                     // If counter is not null, and the user clicked a cell, they want to move there
                     foreach (GridCell g in GridList)
                     {
+                        // Find the cell they clicked on
                         if (hit.transform.name == g.transform.name)
                         {
-                            // Move the counter, then remove the ring and set the current counter to null
-                            MoveCounter(g, currentCounter);
-                            UnsetCurrentCounter(currentCounter);
-                            return true;
+                            // Try to move there. If false, the move was invalid so return false, otherwise unset the counter and return true
+                            if(MoveCounter(g, currentCounter))
+                            {
+                                SetCurrentCounter(currentCounter, false);
+                                return true;
+                            }
+                            else
+                            {
+                                Debug.Log("Invalid move");
+                                return false;
+                            }
                         }
                     }
                 }
                 
             }
         }
+        // Should never be hit
         return false;
     }
 
-    // If the user right clicks a counter, remove it
+    // Old method
     void HandleAltTouch()
     {
         RaycastHit hit;
@@ -171,31 +174,37 @@ public class GridBehaviour : MonoBehaviour
     }
 
     // Grab the point where counters move to and set the counters transform to that
-    void MoveCounter(GridCell cell, Counter counter)
+    bool MoveCounter(GridCell cell, Counter counter)
     {
+        // Create a list of valid moves and a bool to return
         List<GridCell> validMoves = FindValidMoves(counter);
         bool validMove = false;
 
+        // Check each valid move for the move the user requested
         foreach(GridCell g in validMoves)
         {
+            // When found, move the counter there
             if(cell == g)
             {
                 counter.transform.position = cell.GetMidPoint();
+                // If there's alrady a counter there, kill it. Friendly counters should never be a valid move so this should only work on enemies
                 if(cell.GetCounter() != false)
                 {
                     KillCounter(cell.GetCounter());
                 }
+                // If this point is reached, a valid move was chosen so return true and break
                 validMove = true;
                 break;
             }
         }
-        if(!validMove)
-            Debug.Log("Invalid move");
+        // Return the result of validMove
+        return validMove;
     }
 
-    // Move the counter to it's respective graveyard then add to dead/remove from alive lists
+    // Move the counter to its respective graveyard then add to dead/remove from alive lists
     void KillCounter(Counter counter)
     {
+        // Set the counters position to the graveyards
         if (counter.tag == "Red")
         {
             counter.transform.position = RedGraveyard.transform.position;
@@ -205,6 +214,7 @@ public class GridBehaviour : MonoBehaviour
             counter.transform.position = BlueGraveyard.transform.position;
         }
 
+        // Add to dead list, remove from alive list so it can no longer be moved
         CounterListDead.Add(counter);
         CounterListAll.Remove(counter);
 
@@ -213,7 +223,10 @@ public class GridBehaviour : MonoBehaviour
     // Set up board sorts grids, counters and graveyards
     public void SetUpBoard()
     {
+        // Log the game being created
         Debug.Log("Setting up a game of " + currentGame);
+
+        // Instantiate the graveyards first as they'll need to be moved later
         RedGraveyard = Instantiate(gridCellPrefab);
         RedGraveyard.transform.eulerAngles = new Vector3(90, 0, 0);
         RedGraveyard.transform.name = "RedGraveyard";
@@ -224,6 +237,7 @@ public class GridBehaviour : MonoBehaviour
         BlueGraveyard.transform.name = "BlueGraveyard";
         BlueGraveyard.transform.SetParent(transform);
 
+        // If hexapawn, set the grid to 3x3 and move the graveyard and stands for them accordingly
         if (currentGame == Game.Hexapawn)
         {
             gridX = 3;
@@ -234,6 +248,8 @@ public class GridBehaviour : MonoBehaviour
             
             BlueGraveyardStand.position = new Vector3(8, 0.18f, 3);
         }
+
+        // If Octopawn, set the grid to 4x4 and move the graveyard pieces and resize and move the main board stand. Also move the camera.
         else if(currentGame == Game.Octopawn)
         {
             gridX = 4;
@@ -251,7 +267,8 @@ public class GridBehaviour : MonoBehaviour
         }
         // black stores a bool that is flipped back and forth to get a chequerboard pattern
         bool black = true;
-        // Variable that is used to sort Octopawns chequerboard
+
+        // Variable that is used to fix Octopawns chequerboard
         int OctoColourCount = 0;
 
         // nested for statements to create a grid
@@ -275,6 +292,7 @@ public class GridBehaviour : MonoBehaviour
                     cell.BecomeWhite();
                 }
 
+                // In octo, every 4th cell needs to be flipped back to avoid the checkerboard turning into a set of rows
                 OctoColourCount++;
                 if (currentGame == Game.Octopawn)
                 {
@@ -313,16 +331,17 @@ public class GridBehaviour : MonoBehaviour
             thisCounter.transform.SetParent(transform);
             CounterListAll.Add(thisCounter);
         }
-        // spawn the graveyarde on top of the cubes, and set them up correctly.
 
+        // Initial positions for the counters on x
         int redPosX = 1;
         int bluePosX = 1;
 
+        // Red will always start on z = 1, but blue will need to be 5 or 7 depending on game
         int bluePosZ = 5;
         if(currentGame == Game.Octopawn)   
             bluePosZ = 7;
 
-
+        // Move the counters to their correct positions, incrementing the x value each time to create a row
         foreach (Counter c in CounterListAll)
         {
             if(c.tag == "Red")
@@ -384,21 +403,26 @@ public class GridBehaviour : MonoBehaviour
 
     List<GridCell> FindValidMoves(Counter counter)
     {
+        // Create a list to store valid moves
         List<GridCell> ValidMoves = new List<GridCell>();
-        //List<GridCell> InvalidMoves = new List<GridCell>();
-        //ValidMoves.AddRange(GridList);
+
+        // Red and blue counters need different checks for valid moves.
+        // Red first
         if (counter.tag == "Red")
         {
+            // Check each grid cell
             foreach (GridCell g in GridList)
             {
+                // If it's on the next row, it could be valid
                 if(g.transform.position.z == counter.transform.position.z + 2)
                 {
+                    // If the cell is empty and straight ahead, it's a valid move
                     if (g.transform.position.x == counter.transform.position.x && g.GetCounter() == null)
                     {
                         ValidMoves.Add(g);
                     }
 
-
+                    // If the cell is occupied by a blue counter, and it's diagonal to the current cell, it's a valid move
                     if(g.GetCounter() != null && g.GetCounter().tag == "Blue")
                     {
                         if (g.transform.position.x == counter.transform.position.x + 2)
@@ -416,6 +440,8 @@ public class GridBehaviour : MonoBehaviour
                 
             }
         }
+
+        // Same as red, but moving down the board instead.
         else if (counter.tag == "Blue")
         {
             foreach (GridCell g in GridList)
@@ -447,13 +473,15 @@ public class GridBehaviour : MonoBehaviour
         }
         else
         {
+            // If somehow a counter has no tag, that's an issue
             Debug.Log("Error: Counter is not tagged correctly");
         }
+        // Return the completed list
         return ValidMoves;
     }
 
 
-    //
+    // Grabs the list of valid moves and either highlights them, or unhighlights all if valid moves is null
     void DisplayValidMoves()
     {
         if(currentValidMoves != null)
@@ -473,20 +501,24 @@ public class GridBehaviour : MonoBehaviour
         
     }
 
-    void SetCurrentCounter(Counter c)
+    // Take a counter and a bool, and set or unset it as needed
+    void SetCurrentCounter(Counter c, bool set)
     {
-        c.SetSelected(true);
-        currentCounter = c;
-        currentValidMoves = FindValidMoves(c);
-        DisplayValidMoves();
-    }
-
-    void UnsetCurrentCounter(Counter c)
-    {
-        c.SetSelected(false);
-        currentCounter = null;
-        currentValidMoves = null;
-        DisplayValidMoves();
+        if (set)
+        {
+            c.SetSelected(true);
+            currentCounter = c;
+            currentValidMoves = FindValidMoves(c);
+            DisplayValidMoves();
+        }
+        else
+        {
+            c.SetSelected(false);
+            currentCounter = null;
+            currentValidMoves = null;
+            DisplayValidMoves();
+        }
+        
     }
 
     public bool CheckRedWinner()
